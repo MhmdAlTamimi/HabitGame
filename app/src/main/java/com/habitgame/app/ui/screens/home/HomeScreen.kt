@@ -11,9 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.habitgame.app.data.model.Commitment
-import com.habitgame.app.data.model.CommitmentType
-import com.habitgame.app.data.model.Temptation
+import com.habitgame.app.data.model.*
 import com.habitgame.app.domain.DateUtils
 import com.habitgame.app.ui.viewmodels.MainViewModel
 
@@ -29,8 +27,16 @@ fun HomeScreen(
     val temptations by viewModel.temptations.collectAsState()
     val dailyPoints by viewModel.dailyPoints.collectAsState()
     val todayActions by viewModel.todayActions.collectAsState()
+    val isReady by viewModel.isReady.collectAsState()
 
-    val c = challenge ?: return
+    val c = challenge
+
+    if (c == null || !isReady) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+        return
+    }
 
     Scaffold(
         topBar = {
@@ -48,9 +54,10 @@ fun HomeScreen(
                 .fillMaxSize()
                 .padding(padding)
                 .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(bottom = 16.dp)
         ) {
-            item {
+            item(key = "score_header") {
                 ScoreHeader(
                     totalScore = c.totalScore,
                     dailyPoints = dailyPoints,
@@ -59,7 +66,7 @@ fun HomeScreen(
                 )
             }
 
-            item {
+            item(key = "commitments_header") {
                 Text(
                     "Commitments",
                     style = MaterialTheme.typography.titleMedium,
@@ -67,16 +74,21 @@ fun HomeScreen(
                 )
             }
 
-            items(commitments, key = { it.id }) { commitment ->
+            items(commitments, key = { "commitment_${it.id}" }) { commitment ->
+                val action = remember(todayActions, commitment.id) {
+                    todayActions.find {
+                        it.actionType == ActionType.COMMITMENT && it.refId == commitment.id
+                    }
+                }
                 CommitmentItem(
                     commitment = commitment,
-                    action = viewModel.getCommitmentAction(commitment),
+                    action = action,
                     onToggle = { viewModel.toggleCommitment(commitment) },
                     onCountChange = { count -> viewModel.setCommitmentCount(commitment, count) }
                 )
             }
 
-            item {
+            item(key = "temptations_header") {
                 Text(
                     "Temptations",
                     style = MaterialTheme.typography.titleMedium,
@@ -84,9 +96,15 @@ fun HomeScreen(
                 )
             }
 
-            items(temptations, key = { it.id }) { temptation ->
-                val isUnlocked = viewModel.isTemptationUnlocked(temptation)
-                val slipCount = viewModel.getTemptationSlipCount(temptation)
+            items(temptations, key = { "temptation_${it.id}" }) { temptation ->
+                val isUnlocked = remember(c.totalScore, temptation.unlockThreshold) {
+                    c.totalScore >= temptation.unlockThreshold
+                }
+                val slipCount = remember(todayActions, temptation.id) {
+                    todayActions.count {
+                        it.actionType == ActionType.TEMPTATION_SLIP && it.refId == temptation.id
+                    }
+                }
                 TemptationItem(
                     temptation = temptation,
                     isUnlocked = isUnlocked,
@@ -96,15 +114,17 @@ fun HomeScreen(
                 )
             }
 
-            item {
+            item(key = "addiction_slip") {
+                val addictionSlipCount = remember(todayActions) {
+                    todayActions.count { it.actionType == ActionType.ADDICTION_SLIP }
+                }
                 Spacer(Modifier.height(8.dp))
                 AddictionSlipSection(
                     addictionName = c.addictionName,
-                    slipCount = viewModel.getAddictionSlipCount(),
+                    slipCount = addictionSlipCount,
                     onSlip = { viewModel.recordAddictionSlip() },
                     onUndoSlip = { viewModel.removeAddictionSlip() }
                 )
-                Spacer(Modifier.height(16.dp))
             }
         }
     }
@@ -122,7 +142,9 @@ private fun ScoreHeader(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text("Total Score", style = MaterialTheme.typography.labelLarge)
@@ -150,13 +172,15 @@ private fun ScoreHeader(
 @Composable
 private fun CommitmentItem(
     commitment: Commitment,
-    action: com.habitgame.app.data.model.TodayAction?,
+    action: TodayAction?,
     onToggle: () -> Unit,
     onCountChange: (Int) -> Unit
 ) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(12.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -221,7 +245,9 @@ private fun TemptationItem(
 ) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(12.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -273,7 +299,9 @@ private fun AddictionSlipSection(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Button(

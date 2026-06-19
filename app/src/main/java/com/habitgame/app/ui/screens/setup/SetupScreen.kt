@@ -95,9 +95,9 @@ fun SetupScreen(
                             },
                             temptations = temptationsList.map { t ->
                                 Triple(t.name, t.threshold, t.penalty)
-                            }
+                            },
+                            onComplete = onChallengeCreated
                         )
-                        onChallengeCreated()
                     },
                     onBack = { step = 3 }
                 )

@@ -26,11 +26,17 @@ fun SettingsScreen(
     val commitments by viewModel.commitments.collectAsState()
     val temptations by viewModel.temptations.collectAsState()
 
-    val c = challenge ?: return
+    val c = challenge
+    if (c == null) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+        return
+    }
 
-    var penaltyText by remember(c) { mutableStateOf(c.addictionPenaltyPercent.toString()) }
-    var hourText by remember(c) { mutableStateOf(c.dayCloseHour.toString()) }
-    var minuteText by remember(c) { mutableStateOf(c.dayCloseMinute.toString()) }
+    var penaltyText by remember(c.id) { mutableStateOf(c.addictionPenaltyPercent.toString()) }
+    var hourText by remember(c.id) { mutableStateOf(c.dayCloseHour.toString()) }
+    var minuteText by remember(c.id) { mutableStateOf(c.dayCloseMinute.toString()) }
 
     var showAddCommitment by remember { mutableStateOf(false) }
     var showAddTemptation by remember { mutableStateOf(false) }
