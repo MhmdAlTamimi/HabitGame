@@ -46,9 +46,10 @@ fun HistoryScreen(
                     .fillMaxSize()
                     .padding(padding)
                     .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                contentPadding = PaddingValues(bottom = 16.dp)
             ) {
-                items(closedLogs, key = { it.id }) { log ->
+                items(closedLogs, key = { "log_${it.id}" }) { log ->
                     DailyLogCard(log = log, onClick = { onLogClick(log.id) })
                 }
             }
