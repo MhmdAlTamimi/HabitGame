@@ -7,12 +7,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.History
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.LockOpen
-import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
@@ -74,7 +73,7 @@ fun HomeScreen(
                 ),
                 actions = {
                     IconButton(onClick = onNavigateToHistory) {
-                        Icon(Icons.Default.History, "History")
+                        Icon(Icons.Default.DateRange, "History")
                     }
                     IconButton(onClick = onNavigateToSettings) {
                         Icon(Icons.Default.Settings, "Settings")
@@ -348,7 +347,7 @@ private fun CommitmentItem(
                             containerColor = MaterialTheme.colorScheme.surfaceVariant
                         )
                     ) {
-                        Icon(Icons.Default.Remove, "Decrease", modifier = Modifier.size(16.dp))
+                        Icon(Icons.Default.Clear, "Decrease", modifier = Modifier.size(16.dp))
                     }
                     Text(
                         "$currentCount/${commitment.maxCount}",
@@ -405,7 +404,7 @@ private fun TemptationItem(
                 ) {
                     Box(contentAlignment = Alignment.Center) {
                         Icon(
-                            if (isUnlocked) Icons.Default.LockOpen else Icons.Default.Lock,
+                            if (isUnlocked) Icons.Default.Check else Icons.Default.Lock,
                             contentDescription = if (isUnlocked) "Unlocked" else "Locked",
                             tint = Color.White,
                             modifier = Modifier.size(20.dp)
