@@ -5,49 +5,39 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!-- Shield body -->
-    <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M54,22 L30,32 L30,54 C30,70 40,82 54,88 C68,82 78,70 78,54 L78,32 Z" />
+    <!-- Pixel heart - 8-bit RPG style -->
+    <!-- Row 1: two bumps -->
+    <path android:fillColor="#FF1744"
+        android:pathData="M30,36 h6 v-6 h12 v6 h12 v-6 h12 v6 h6 v6 h-48 z" />
 
-    <!-- Shield outline -->
-    <path
-        android:fillColor="#E8DEF8"
-        android:pathData="M54,25 L33,34 L33,54 C33,68 42,79 54,85 C66,79 75,68 75,54 L75,34 Z" />
+    <!-- Row 2: full width -->
+    <path android:fillColor="#FF1744"
+        android:pathData="M24,42 h60 v6 h-60 z" />
 
-    <!-- Shield inner -->
-    <path
-        android:fillColor="#4A148C"
-        android:pathData="M54,28 L36,36 L36,54 C36,66 44,76 54,82 C64,76 72,66 72,54 L72,36 Z" />
+    <!-- Row 3 -->
+    <path android:fillColor="#FF1744"
+        android:pathData="M24,48 h60 v6 h-60 z" />
 
-    <!-- Sword vertical blade -->
-    <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M52,38 L56,38 L56,68 L52,68 Z" />
+    <!-- Row 4 -->
+    <path android:fillColor="#FF1744"
+        android:pathData="M30,54 h48 v6 h-48 z" />
 
-    <!-- Sword horizontal guard -->
-    <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M46,50 L62,50 L62,53 L46,53 Z" />
+    <!-- Row 5 -->
+    <path android:fillColor="#FF1744"
+        android:pathData="M36,60 h36 v6 h-36 z" />
 
-    <!-- Sword handle -->
-    <path
-        android:fillColor="#FF6F00"
-        android:pathData="M52,68 L56,68 L56,74 L52,74 Z" />
+    <!-- Row 6 -->
+    <path android:fillColor="#FF1744"
+        android:pathData="M42,66 h24 v6 h-24 z" />
 
-    <!-- Sword pommel -->
-    <path
-        android:fillColor="#FF6F00"
-        android:pathData="M51,74 L57,74 L57,77 L51,77 Z" />
+    <!-- Row 7: tip -->
+    <path android:fillColor="#FF1744"
+        android:pathData="M48,72 h12 v6 h-12 z" />
 
-    <!-- Star left -->
-    <path
-        android:fillColor="#FFD600"
-        android:pathData="M41,42 L43,44 L41,46 L43,44.5 L45,46 L43,44 L45,42 L43,43.5 Z" />
-
-    <!-- Star right -->
-    <path
-        android:fillColor="#FFD600"
-        android:pathData="M63,42 L65,44 L63,46 L65,44.5 L67,46 L65,44 L67,42 L65,43.5 Z" />
+    <!-- Shine highlight pixel -->
+    <path android:fillColor="#FF8A80"
+        android:pathData="M36,36 h6 v6 h-6 z" />
+    <path android:fillColor="#FF8A80"
+        android:pathData="M30,42 h12 v6 h-12 z" />
 
 </vector>
