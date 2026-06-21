@@ -50,7 +50,7 @@ fun HistoryDetailScreen(
                     .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                items(entries) { entry ->
+                items(entries, key = { it.id }) { entry ->
                     Card(modifier = Modifier.fillMaxWidth()) {
                         Row(
                             modifier = Modifier

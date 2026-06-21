@@ -26,11 +26,17 @@ fun SettingsScreen(
     val commitments by viewModel.commitments.collectAsState()
     val temptations by viewModel.temptations.collectAsState()
 
-    val c = challenge ?: return
+    val c = challenge
+    if (c == null) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+        return
+    }
 
-    var penaltyText by remember(c) { mutableStateOf(c.addictionPenaltyPercent.toString()) }
-    var hourText by remember(c) { mutableStateOf(c.dayCloseHour.toString()) }
-    var minuteText by remember(c) { mutableStateOf(c.dayCloseMinute.toString()) }
+    var penaltyText by remember(c.id) { mutableStateOf(c.addictionPenaltyPercent.toString()) }
+    var hourText by remember(c.id) { mutableStateOf(c.dayCloseHour.toString()) }
+    var minuteText by remember(c.id) { mutableStateOf(c.dayCloseMinute.toString()) }
 
     var showAddCommitment by remember { mutableStateOf(false) }
     var showAddTemptation by remember { mutableStateOf(false) }
@@ -53,9 +59,10 @@ fun SettingsScreen(
                 .fillMaxSize()
                 .padding(padding)
                 .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(bottom = 16.dp)
         ) {
-            item {
+            item(key = "addiction_section") {
                 Text("Addiction", style = MaterialTheme.typography.titleMedium)
                 Text(c.addictionName, style = MaterialTheme.typography.bodyLarge)
                 Spacer(Modifier.height(4.dp))
@@ -77,7 +84,7 @@ fun SettingsScreen(
                 }
             }
 
-            item {
+            item(key = "dayclose_section") {
                 Spacer(Modifier.height(8.dp))
                 Text("Day-Close Time", style = MaterialTheme.typography.titleMedium)
                 Row(
@@ -114,7 +121,7 @@ fun SettingsScreen(
                 }
             }
 
-            item {
+            item(key = "commitments_header") {
                 Spacer(Modifier.height(8.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -126,14 +133,16 @@ fun SettingsScreen(
                 }
             }
 
-            items(commitments, key = { it.id }) { commitment ->
+            items(commitments, key = { "commitment_${it.id}" }) { commitment ->
                 Card(modifier = Modifier.fillMaxWidth()) {
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(12.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Column {
+                        Column(modifier = Modifier.weight(1f)) {
                             Text(commitment.name)
                             Text(
                                 "+${commitment.pointValue} pts (${commitment.type.name}${if (commitment.type == CommitmentType.COUNT) ", max ${commitment.maxCount}" else ""})",
@@ -147,7 +156,7 @@ fun SettingsScreen(
                 }
             }
 
-            item {
+            item(key = "temptations_header") {
                 Spacer(Modifier.height(8.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -159,14 +168,16 @@ fun SettingsScreen(
                 }
             }
 
-            items(temptations, key = { it.id }) { temptation ->
+            items(temptations, key = { "temptation_${it.id}" }) { temptation ->
                 Card(modifier = Modifier.fillMaxWidth()) {
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(12.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Column {
+                        Column(modifier = Modifier.weight(1f)) {
                             Text(temptation.name)
                             Text(
                                 "Unlocks at ${temptation.unlockThreshold}, penalty ${temptation.slipPenalty}",
@@ -180,7 +191,7 @@ fun SettingsScreen(
                 }
             }
 
-            item {
+            item(key = "end_challenge") {
                 Spacer(Modifier.height(24.dp))
                 OutlinedButton(
                     onClick = { showEndConfirm = true },
@@ -189,7 +200,6 @@ fun SettingsScreen(
                 ) {
                     Text("End Challenge")
                 }
-                Spacer(Modifier.height(16.dp))
             }
         }
     }
@@ -252,13 +262,15 @@ private fun AddCommitmentDialog(
                     value = name,
                     onValueChange = { name = it },
                     label = { Text("Name") },
+                    modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
                 OutlinedTextField(
                     value = points,
-                    onValueChange = { if (it.all { c -> c.isDigit() }) points = it },
+                    onValueChange = { if (it.all { ch -> ch.isDigit() }) points = it },
                     label = { Text("Point value") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -269,9 +281,10 @@ private fun AddCommitmentDialog(
                 if (!isBinary) {
                     OutlinedTextField(
                         value = maxCount,
-                        onValueChange = { if (it.all { c -> c.isDigit() }) maxCount = it },
+                        onValueChange = { if (it.all { ch -> ch.isDigit() }) maxCount = it },
                         label = { Text("Max count") },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        modifier = Modifier.fillMaxWidth(),
                         singleLine = true
                     )
                 }
@@ -311,20 +324,23 @@ private fun AddTemptationDialog(
                     value = name,
                     onValueChange = { name = it },
                     label = { Text("Name") },
+                    modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
                 OutlinedTextField(
                     value = threshold,
-                    onValueChange = { if (it.all { c -> c.isDigit() }) threshold = it },
+                    onValueChange = { if (it.all { ch -> ch.isDigit() }) threshold = it },
                     label = { Text("Unlock threshold") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
                 OutlinedTextField(
                     value = penalty,
-                    onValueChange = { if (it.all { c -> c.isDigit() }) penalty = it },
+                    onValueChange = { if (it.all { ch -> ch.isDigit() }) penalty = it },
                     label = { Text("Slip penalty") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
             }

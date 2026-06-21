@@ -95,9 +95,9 @@ fun SetupScreen(
                             },
                             temptations = temptationsList.map { t ->
                                 Triple(t.name, t.threshold, t.penalty)
-                            }
+                            },
+                            onComplete = onChallengeCreated
                         )
-                        onChallengeCreated()
                     },
                     onBack = { step = 3 }
                 )
@@ -139,7 +139,7 @@ private fun StepAddiction(
         Text("Set Penalty Percentage", style = MaterialTheme.typography.headlineSmall)
         OutlinedTextField(
             value = penaltyPercent,
-            onValueChange = { if (it.all { c -> c.isDigit() }) onPercentChange(it) },
+            onValueChange = { if (it.all { ch -> ch.isDigit() }) onPercentChange(it) },
             label = { Text("Penalty % (e.g. 10)") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth(),
@@ -183,7 +183,7 @@ private fun StepCommitments(
         )
         OutlinedTextField(
             value = points,
-            onValueChange = { if (it.all { c -> c.isDigit() }) points = it },
+            onValueChange = { if (it.all { ch -> ch.isDigit() }) points = it },
             label = { Text("Point value") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth(),
@@ -208,7 +208,7 @@ private fun StepCommitments(
         if (!isBinary) {
             OutlinedTextField(
                 value = maxCount,
-                onValueChange = { if (it.all { c -> c.isDigit() }) maxCount = it },
+                onValueChange = { if (it.all { ch -> ch.isDigit() }) maxCount = it },
                 label = { Text("Max count per day") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.fillMaxWidth(),
@@ -294,7 +294,7 @@ private fun StepTemptations(
         )
         OutlinedTextField(
             value = threshold,
-            onValueChange = { if (it.all { c -> c.isDigit() }) threshold = it },
+            onValueChange = { if (it.all { ch -> ch.isDigit() }) threshold = it },
             label = { Text("Unlock threshold (score needed)") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth(),
@@ -302,7 +302,7 @@ private fun StepTemptations(
         )
         OutlinedTextField(
             value = penalty,
-            onValueChange = { if (it.all { c -> c.isDigit() }) penalty = it },
+            onValueChange = { if (it.all { ch -> ch.isDigit() }) penalty = it },
             label = { Text("Slip penalty (points lost)") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth(),
